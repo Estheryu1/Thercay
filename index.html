@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#e9dfc8">
 <title>THERCAY</title>
-<script>try{var d=document.documentElement,t=localStorage.getItem("pc_theme"),k=localStorage.getItem("pc_skin");if(t==="dark")d.setAttribute("data-theme","dark");if(k==="comic"||k==="ios"||k==="glass")d.setAttribute("data-skin",k);var C={paper:["#e9dfc8","#0b2240"],comic:["#fde8f1","#1c1530"],ios:["#f2f2f7","#000000"],glass:["#cddfff","#090a24"]},c=C[d.getAttribute("data-skin")||"paper"],m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",c[t==="dark"?1:0])}catch(e){}</script>
+<script>try{var d=document.documentElement,t=localStorage.getItem("pc_theme"),k=localStorage.getItem("pc_skin");if(t==="dark")d.setAttribute("data-theme","dark");if(k===null||k==="bento"){d.setAttribute("data-skin","ios");d.setAttribute("data-bento","1")}else if(k==="comic"||k==="ios"||k==="glass")d.setAttribute("data-skin",k);var C={paper:["#e9dfc8","#0b2240"],comic:["#fde8f1","#1c1530"],ios:["#f2f2f7","#000000"],glass:["#cddfff","#090a24"]},c=C[d.getAttribute("data-skin")||"paper"],m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",c[t==="dark"?1:0])}catch(e){}</script>
 <style>
 :root{
   --bg:#e9dfc8; --paper:#fbf6ea; --paper2:#f1e8d2; --edge:#d9ccae; --ink:#3b3226; --soft:#8a7a62;
@@ -976,6 +976,89 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
   header #onBtn{min-width:30px;padding:6px 8px;font-size:11.5px;white-space:nowrap;flex:none}
   html[data-skin="ios"] header .t,html[data-skin="glass"] header .t,html[data-skin="comic"] header .t{font-size:16px}
 }
+
+/* ---- grup ---- */
+.gav{width:36px;height:36px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:var(--teal);color:#fff;font-weight:800;font-size:16px;border:2px solid var(--ring);box-shadow:0 2px 0 var(--edge)}
+.conv .gav{width:46px;height:46px;font-size:19px}
+.ctabs{margin:0 12px 10px;flex:none}
+.ctabs i{font-style:normal;margin-left:6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--teal);color:#fff;font-size:11px;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
+.gmlist{max-height:38vh;overflow-y:auto;margin:6px 0}
+.gm{display:flex;align-items:center;gap:10px;padding:7px 2px}
+.gm img{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:none}
+.gm b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.gm .tag{font-size:11px;font-weight:800;color:var(--teal)}
+.gm .gx{border:0;background:none;font-weight:800;cursor:pointer;color:var(--teal);font-size:13px}
+.gm .gx.red{color:#e0453a}
+.gchips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.gchip{display:inline-flex;align-items:center;gap:6px;background:var(--paper2);border-radius:14px;padding:4px 6px 4px 10px;font-weight:700;font-size:13px}
+.gchip button{border:0;background:none;color:var(--soft);cursor:pointer;font-weight:800;padding:0 4px}
+.glabel{font-size:12px;font-weight:800;color:var(--soft);margin:10px 0 2px;text-align:left}
+.ginfo-sub{font-size:12px;color:var(--soft);margin:-4px 0 8px}
+
+/* ============================ iOS BENTO ============================
+   Aktif lewat html[data-bento] (di atas tema iOS: data-skin="ios") */
+.sk-bento{background:#f2f2f7}
+.sk-bento i{border-radius:10px!important;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.sk-bento i:nth-child(1){background:#fff;left:8px;top:8px;width:46%;height:22px}
+.sk-bento i:nth-child(2){background:#007aff;right:8px;top:8px;width:36%;height:22px}
+.sk-bento i:nth-child(3){background:#34c759;left:8px;bottom:6px;width:84%;height:16px}
+html[data-bento]{--bento-r:26px;--bento-sh:0 1px 2px rgba(0,0,0,.04),0 10px 28px rgba(0,0,0,.06)}
+html[data-bento][data-theme="dark"]{--bento-sh:0 0 0 .5px rgba(255,255,255,.06),0 10px 28px rgba(0,0,0,.5)}
+html[data-bento] .sheet{background:var(--bg);box-shadow:none}
+html[data-bento] .msgs{background:var(--bg)}
+html[data-bento] .vhead{padding:16px 18px 8px}
+html[data-bento] .vhead h2{font-size:30px;font-weight:800;letter-spacing:-.025em}
+html[data-bento] .vhead.dmh{padding:10px 14px}
+html[data-bento] .vhead.dmh .dmbox{background:var(--card);border-radius:20px;box-shadow:var(--bento-sh)}
+html[data-bento] .vhead.dmh img,html[data-bento] .gav{border-radius:14px}
+html[data-bento] .convs{padding:6px 14px 104px;gap:10px}
+html[data-bento] .conv{background:var(--card);border-radius:var(--bento-r);padding:14px;box-shadow:var(--bento-sh)}
+html[data-bento] .conv img,html[data-bento] .conv .gav{border-radius:18px}
+html[data-bento] .conv .side i{background:#ff3b30}
+html[data-bento] .conv:active{transform:scale(.985)}
+html[data-bento] .gav{background:linear-gradient(135deg,#5ac8fa,#007aff);border:0;box-shadow:none}
+html[data-bento] .ctabs{margin:0 14px 12px}
+html[data-bento] .fab{border-radius:22px;width:60px;height:60px;box-shadow:0 10px 26px rgba(0,122,255,.38)}
+/* dock melayang */
+html[data-bento] .dock{margin:6px 14px max(12px,env(safe-area-inset-bottom));padding:6px;border-radius:30px;border:0;
+  box-shadow:0 10px 34px rgba(0,0,0,.14),0 0 0 .5px rgba(0,0,0,.06)}
+html[data-bento][data-theme="dark"] .dock{box-shadow:0 10px 34px rgba(0,0,0,.6),0 0 0 .5px rgba(255,255,255,.1)}
+html[data-bento] .dock button{border-radius:24px}
+html[data-bento] .dock button.on{background:rgba(0,122,255,.14)}
+/* tools: grid bento 2 kolom */
+html[data-bento] .convs.toolslist{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
+html[data-bento] .toolcard{flex-direction:column;align-items:flex-start;gap:14px;min-height:150px;padding:18px;border-radius:30px;box-shadow:var(--bento-sh)}
+html[data-bento] .toolcard.opn{grid-column:1/-1;flex-direction:row;align-items:center;min-height:0;gap:14px;padding:20px}
+html[data-bento] .toolcard .tico{width:48px;height:48px;border-radius:16px}
+html[data-bento] .toolcard:nth-child(2) .tico{background:linear-gradient(135deg,#ffb340,#ff9500)}
+html[data-bento] .toolcard:nth-child(3) .tico{background:linear-gradient(135deg,#c77dff,#af52de)}
+html[data-bento] .toolcard:nth-child(4) .tico{background:linear-gradient(135deg,#5ac8fa,#007aff)}
+html[data-bento] .toolcard:nth-child(5) .tico{background:linear-gradient(135deg,#ff6b81,#ff3b30)}
+html[data-bento] .toolcard.opn .tico{background:linear-gradient(135deg,#34c759,#16a34a)}
+html[data-bento] .toolcard .tmid b{font-size:17px;letter-spacing:-.01em}
+/* profil: tile bento */
+html[data-bento] .prof{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start;padding:8px 14px 28px}
+html[data-bento] .prof>*{grid-column:1/-1;margin:0}
+html[data-bento] .prof .bigwrap{background:var(--card);border-radius:30px;padding:26px 16px;box-shadow:var(--bento-sh)}
+html[data-bento] .prof .bigwrap img{border:0;box-shadow:0 8px 24px rgba(0,0,0,.16);border-radius:34px}
+html[data-bento] .prof .field{background:var(--card);border-radius:var(--bento-r);padding:14px 16px;box-shadow:var(--bento-sh)}
+html[data-bento] .prof .btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:0}
+html[data-bento] .prof .btns .btn{border-radius:22px;padding:16px 10px;font-size:14px}
+/* kartu, popup, dialog */
+html[data-bento] .pop,html[data-bento] .card,html[data-bento] .stk-sheet,html[data-bento] .ctx-sheet{border-radius:30px}
+html[data-bento] .gmlist,html[data-bento] .gchip{border-radius:16px}
+html[data-bento] .toolcard.soon{opacity:.85}
+html[data-bento] header{border-bottom:0;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}
+
+/* ---- privasi status ---- */
+.privopt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:2px solid transparent;background:var(--paper2);color:var(--ink);border-radius:16px;padding:12px 14px;margin:6px 0;cursor:pointer;font:inherit}
+.privopt b{display:block;font-size:15px}
+.privopt small{display:block;color:var(--soft);font-size:12px;margin-top:2px}
+.privopt .rd{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--soft);display:flex;align-items:center;justify-content:center}
+.privopt.on{border-color:var(--teal)}
+.privopt.on .rd{border-color:var(--teal);background:var(--teal);color:#fff}
+.privopt .rd svg{display:none}
+.privopt.on .rd svg{display:block}
 </style>
 </head>
 <body>
@@ -1058,7 +1141,9 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
       <!-- DAFTAR CHAT PRIBADI -->
       <section class="view hidden" id="vChats">
         <div class="vhead"><button class="back hidden" id="arcBack" type="button" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2 id="convTitle">Chat pribadi</h2></div>
+        <div class="tabs ctabs" id="cTabs"><button type="button" id="cTabDm" class="on">Pribadi</button><button type="button" id="cTabGrp">Grup<i id="grpBadge" class="hidden"></i></button></div>
         <div class="convs" id="convs"></div>
+        <div class="convs hidden" id="grpConvs"></div>
         <button class="fab" id="addChat" type="button" aria-label="Chat baru"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
       </section>
 
@@ -1086,9 +1171,28 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
           <button class="go" type="submit" aria-label="Kirim"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 11.2 20.6 3.4c.8-.3 1.5.4 1.2 1.2l-7.8 18.1c-.4.9-1.7.8-2-.1l-2-6.5-6.5-2c-.9-.3-1-1.6-.1-1.9z"/></svg></button>
         </form>
       </section>
+
+      <!-- ISI CHAT GRUP -->
+      <section class="view hidden" id="vGrp">
+        <div class="vhead dmh">
+          <button class="back" id="grpBack" type="button" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button class="dmbox" id="grpBox" type="button" aria-label="Info grup"><span class="gav" id="grpAv">G</span><span class="dmwho"><b id="grpName"></b><small id="grpSub"></small></span></button>
+        </div>
+        <div class="msgs" id="xList"></div>
+        <div id="xReply" class="replybar hidden">
+          <div class="ri"><b id="xReplyWho"></b><span id="xReplyTxt"></span></div>
+          <button type="button" class="rx" id="xReplyX" aria-label="Batal reply"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        </div>
+        <form class="sendbar" id="xSend" autocomplete="off">
+          <button class="stkbtn" id="xAtt" type="button" aria-label="Lampirkan"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.4 11.6l-8.5 8.5a5 5 0 0 1-7.1-7.1l9.2-9.2a3.2 3.2 0 0 1 4.5 4.5L10 17.8a1.4 1.4 0 0 1-2-2l8.1-8.1"/></svg></button>
+          <textarea id="xMsg" maxlength="500" rows="1" placeholder="Tulis pesan grup…" enterkeyhint="enter"></textarea>
+          <button class="stkbtn" id="xStk" type="button" aria-label="Stiker"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6l8-8z"/><path d="M20 12h-4a2 2 0 0 0-2 2v4"/><path d="M9 9h.01M15 9h.01"/><path d="M8.5 14c.9 1 2 1.4 3 1.2"/></svg></button>
+          <button class="go" type="submit" aria-label="Kirim"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 11.2 20.6 3.4c.8-.3 1.5.4 1.2 1.2l-7.8 18.1c-.4.9-1.7.8-2-.1l-2-6.5-6.5-2c-.9-.3-1-1.6-.1-1.9z"/></svg></button>
+        </form>
+      </section>
       <!-- STATUS -->
       <section class="view hidden" id="vStatus">
-        <div class="vhead"><h2>Status</h2><button class="pill add" id="addStatus" type="button">+ Buat status</button></div>
+        <div class="vhead"><h2>Status</h2><button class="pill" id="stPriv" type="button" aria-label="Privasi status"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> Privasi</button><button class="pill add" id="addStatus" type="button">+ Buat status</button></div>
         <div class="convs" id="stList"></div>
       </section>
       <!-- PROFILE -->
@@ -1358,7 +1462,8 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
   });
 
   // ---------- app ----------
-  const gList = $('#gList'), dList = $('#dList');
+  const gList = $('#gList'), dList = $('#dList'), xList = $('#xList');
+  const scopeOf = el => (el === gList ? 'global' : el === xList ? 'group' : 'dm');
   const nearBottom = el => el.scrollHeight - el.scrollTop - el.clientHeight < 120;
   const toEnd = (el, smooth) => { el.style.scrollBehavior = smooth ? 'smooth' : 'auto'; el.scrollTop = el.scrollHeight; };
   const fmt = t => new Date(t).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
@@ -1447,7 +1552,7 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
       note.appendChild(si);
     } else if (m.media) {
       note.classList.add('media');
-      const scope = listEl === gList ? 'global' : 'dm';
+      const scope = scopeOf(listEl);
       note.appendChild(renderChatMedia(m, scope));
       if (m.text) {
         const cap = document.createElement('div'); cap.className = 'medcap';
@@ -1459,13 +1564,13 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
       renderText(txt, m.text, m.mentions);
       note.appendChild(txt);
     }
-    renderReacts(note, m, listEl === gList ? 'global' : 'dm');
+    renderReacts(note, m, scopeOf(listEl));
     row.append(img, note);
     const hint = document.createElement('div'); hint.className = 'swipehint'; hint.innerHTML = icon('reply', 20);
     row.appendChild(hint);
     // long-press / context
     if (m.pinned) syncPin(row, m);
-    bindMsgGestures(row, note, m, listEl === gList ? 'global' : 'dm');
+    bindMsgGestures(row, note, m, scopeOf(listEl));
     listEl.appendChild(row);
     return mine;
   }
@@ -1537,7 +1642,8 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
   function showView() {
     const g = st.tab === 'global', c = st.tab === 'chats', s = st.tab === 'status', pr = st.tab === 'profile', tl = st.tab === 'tools', rc = st.tab === 'rch';
     $('#vGlobal').classList.toggle('hidden', !g);
-    $('#vChats').classList.toggle('hidden', !(c && !st.dm));
+    $('#vChats').classList.toggle('hidden', !(c && !st.dm && !st.grp));
+    $('#vGrp').classList.toggle('hidden', !(c && st.grp));
     $('#vDm').classList.toggle('hidden', !(c && st.dm && !st.userPage));
     $('#vUser').classList.toggle('hidden', !(c && st.dm && st.userPage));
     $('#vStatus').classList.toggle('hidden', !s);
@@ -1551,6 +1657,7 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     $('#navProfile').classList.toggle('on', pr);
     if (g) { st.tagN = 0; setGBadge(); toEnd(gList, false); }
     if (c && st.dm) toEnd(dList, false);
+    if (c && st.grp) toEnd(xList, false);
     if (s) loadStatuses();
     if (pr) renderProfile();
     if (rc) loadRchQuota();
@@ -1560,14 +1667,17 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
   $('#navProfile').onclick = () => { st.tab = 'profile'; showView(); };
   $('#navTools').onclick = () => { st.tab = 'tools'; showView(); };
   $('#navChats').onclick = () => {
-    if (st.tab === 'chats' && st.dm) closeDm(); // tap lagi saat di dalam chat = balik ke daftar
+    if (st.tab === 'chats' && st.grp) closeGrp();
+    else if (st.tab === 'chats' && st.dm) closeDm(); // tap lagi saat di dalam chat = balik ke daftar
     else if (st.tab === 'chats' && st.arcOpen) { st.arcOpen = false; renderConvs(); }
     st.tab = 'chats'; showView();
   };
 
   // ---------- chat pribadi ----------
   function setBadge() {
-    const n = st.convs.reduce((a, c) => a + (c.unread || 0), 0);
+    const gn = (st.grps || []).reduce((a, g) => a + (g.unread || 0), 0);
+    const gb = $('#grpBadge'); if (gb) { gb.textContent = gn > 99 ? '99+' : gn; gb.classList.toggle('hidden', !gn); }
+    const n = st.convs.reduce((a, c) => a + (c.unread || 0), 0) + gn;
     const b = $('#navBadge'); b.textContent = n > 99 ? '99+' : n; b.classList.toggle('hidden', !n);
   }
   // tekan lama bubble/kontak tidak boleh memilih teks (biru-biru + popup Google), salin lewat menu "Salin teks"
@@ -1664,9 +1774,9 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     const list = main.filter(c => c.p).concat(main.filter(c => !c.p));
     if (st.arcOpen && !arc.length) st.arcOpen = false;
     const inArc = !!st.arcOpen;
-    $('#convTitle').textContent = inArc ? 'Arsip' : 'Chat pribadi';
+    $('#convTitle').textContent = inArc ? 'Arsip' : (st.cTab === 'grp' ? 'Grup' : 'Chat pribadi');
     $('#arcBack').classList.toggle('hidden', !inArc);
-    $('#addChat').classList.toggle('hidden', inArc);
+    $('#addChat').classList.toggle('hidden', inArc && st.cTab !== 'grp');
     // halaman Arsip: isinya cuma kontak yang diarsipkan
     if (inArc) { arc.forEach(c => box.appendChild(buildConv(c))); return; }
     if (!st.convs.length) {
@@ -1697,7 +1807,7 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
   function setDmName(n) { const e = $('#dmName'); e.innerHTML = ''; e.appendChild(nameBadged(n)); }
   function openDm(name) {
     closePop();
-    st.tab = 'chats'; st.dm = name; st.userPage = null;
+    st.tab = 'chats'; st.dm = name; st.userPage = null; st.grp = null;
     setDmName(name); refreshDmSub();
     const im = $('#dmImg'); im.dataset.u = name; im.src = avUrl(name);
     dList.innerHTML = '<div class="empty">Memuat…</div>';
@@ -1812,7 +1922,7 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
       p.append(im, nm, b);
     });
   }
-  $('#addChat').onclick = () => openPop(p => {
+  const openNewChatPop = () => openPop(p => {
     p.innerHTML = '<h2>Chat baru</h2>';
     const inp = document.createElement('input'); inp.className = 'in'; inp.placeholder = 'Username teman'; inp.maxLength = 16;
     inp.autocapitalize = 'none'; inp.autocomplete = 'off';
@@ -1835,11 +1945,351 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     setTimeout(() => inp.focus(), 300);
   });
 
+  $('#addChat').onclick = () => (st.cTab === 'grp' ? openCreateGroup() : openNewChatPop());
+
+  // ---------- grup ----------
+  st.grp = null; st.grps = []; st.cTab = 'dm'; st.ginfo = null; st.gDraw = null;
+  const grpInit = n => (String(n || '?').trim().charAt(0) || '?').toUpperCase();
+  function myGroupAdmin() { return !!(st.ginfo && st.me && same(st.ginfo.admin, st.me.name)); }
+  const grpPreview = m => (m.sticker ? 'Stiker' : (m.text || (m.media ? (m.media.type === 'video' ? 'Video' : m.media.type === 'audio' ? 'Audio' : 'Foto') : '')));
+  function syncCTab() {
+    const g = st.cTab === 'grp';
+    $('#cTabDm').classList.toggle('on', !g); $('#cTabGrp').classList.toggle('on', g);
+    $('#convs').classList.toggle('hidden', g); $('#grpConvs').classList.toggle('hidden', !g);
+    $('#addChat').setAttribute('aria-label', g ? 'Grup baru' : 'Chat baru');
+    if (g) st.arcOpen = false;
+    renderConvs(); renderGrps();
+  }
+  $('#cTabDm').onclick = () => { st.cTab = 'dm'; syncCTab(); };
+  $('#cTabGrp').onclick = () => { st.cTab = 'grp'; syncCTab(); loadGrps(); };
+
+  function buildGrpRow(g) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'conv';
+    const av = document.createElement('span'); av.className = 'gav'; av.textContent = grpInit(g.name);
+    const mid = document.createElement('div'); mid.className = 'mid';
+    const nm = document.createElement('b'); nm.textContent = g.name;
+    const pv = document.createElement('span'); pv.textContent = g.text || (g.count + ' anggota');
+    mid.append(nm, pv);
+    const side = document.createElement('div'); side.className = 'side';
+    const tm = document.createElement('span'); tm.textContent = fmtConv(g.t); side.appendChild(tm);
+    if (g.unread) { const u = document.createElement('i'); u.textContent = g.unread > 99 ? '99+' : g.unread; side.appendChild(u); }
+    b.append(av, mid, side);
+    b.onclick = () => openGrp(g.id);
+    return b;
+  }
+  function renderGrps() {
+    const box = $('#grpConvs'); box.innerHTML = '';
+    if (!st.grps.length) box.innerHTML = '<div class="empty">Belum ada grup.<br>Ketuk + untuk membuat grup<br>dan tambah temanmu.</div>';
+    else st.grps.slice().sort((a, b) => (b.t || 0) - (a.t || 0)).forEach(g => box.appendChild(buildGrpRow(g)));
+    setBadge();
+  }
+  function loadGrps() {
+    if (!st.socket) return;
+    st.socket.emit('grp:list', null, r => { if (Array.isArray(r)) { st.grps = r; renderGrps(); } });
+  }
+  function applyGrpInfo(info) {
+    if (!info) return;
+    st.ginfo = info;
+    info.members.forEach(x => { st.avs[x.u] = x.av; });
+    $('#grpName').textContent = info.name; $('#grpAv').textContent = grpInit(info.name);
+    $('#grpSub').textContent = info.members.length + ' anggota';
+  }
+  function openGrp(id) {
+    closePop();
+    const g = st.grps.find(x => x.id === id);
+    st.tab = 'chats'; st.dm = null; st.userPage = null; st.grp = id; st.ginfo = null;
+    $('#grpName').textContent = g ? g.name : 'Grup'; $('#grpAv').textContent = grpInit(g && g.name);
+    $('#grpSub').textContent = g ? g.count + ' anggota' : '';
+    xList.innerHTML = '<div class="empty">Memuat…</div>';
+    clearReply(); showView();
+    st.socket.emit('grp:history', id, r => {
+      if (st.grp !== id) return;
+      xList.innerHTML = '';
+      if (!r || r.error) { xList.innerHTML = '<div class="empty">Gagal memuat grup</div>'; return; }
+      applyGrpInfo(r.info);
+      if (!r.msgs.length) xList.innerHTML = '<div class="empty">Belum ada pesan.<br>Sapa semua anggota!</div>';
+      r.msgs.forEach(m => addMsg(xList, m, true, true));
+      refreshAvatars(); toEnd(xList, false);
+    });
+    markGrpRead(id);
+  }
+  function markGrpRead(id) {
+    st.socket.emit('grp:read', id);
+    const g = st.grps.find(x => x.id === id);
+    if (g && g.unread) { g.unread = 0; renderGrps(); }
+  }
+  function closeGrp() { st.grp = null; st.ginfo = null; st.gDraw = null; clearReply(); showView(); renderGrps(); }
+  $('#grpBack').onclick = closeGrp;
+  $('#grpBox').onclick = () => openGrpInfo();
+
+  function onGrpMsg(m) {
+    if (!m || !m.g) return;
+    const mine = isMe(m.u);
+    removeTyping('group', m.u);
+    if (m.av) st.avs[m.u] = Math.max(st.avs[m.u] || 0, m.av);
+    let g = st.grps.find(x => x.id === m.g);
+    if (!g) loadGrps();
+    else { g.text = m.u + ': ' + grpPreview(m); g.t = m.t; }
+    const viewing = st.tab === 'chats' && st.grp === m.g;
+    if (viewing) {
+      const stick = nearBottom(xList);
+      addMsg(xList, m, false, true);
+      if (mine || stick) toEnd(xList, true);
+      st.socket.emit('grp:read', m.g);
+    } else if (!mine) {
+      if (g) g.unread = (g.unread || 0) + 1;
+      toast('Pesan baru di ' + (g ? g.name : 'grup'));
+    }
+    renderGrps();
+  }
+
+  // cek username terdaftar (dipakai saat tambah anggota)
+  async function lookupUser(v) {
+    const r = await fetch('/api/user/' + encodeURIComponent(v), { headers: { 'x-token': st.token } });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || 'Username tidak ditemukan');
+    st.avs[j.user.name] = j.user.av;
+    return j.user.name;
+  }
+
+  function openCreateGroup() {
+    openPop(p => {
+      p.innerHTML = '<h2>Grup baru</h2>';
+      const nm = document.createElement('input'); nm.className = 'in'; nm.placeholder = 'Nama grup'; nm.maxLength = 30; nm.autocomplete = 'off';
+      const lab = document.createElement('div'); lab.className = 'glabel'; lab.textContent = 'Anggota (' + 'kamu otomatis jadi admin grup)';
+      const picked = new Map();
+      const chips = document.createElement('div'); chips.className = 'gchips';
+      const er = document.createElement('p'); er.className = 'perr';
+      const drawChips = () => {
+        chips.innerHTML = '';
+        picked.forEach((name, k) => {
+          const c = document.createElement('span'); c.className = 'gchip';
+          const t = document.createElement('span'); t.textContent = name;
+          const x = document.createElement('button'); x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label', 'Hapus');
+          x.onclick = () => { picked.delete(k); drawChips(); drawContacts(); };
+          c.append(t, x); chips.appendChild(c);
+        });
+      };
+      const add = name => {
+        if (isMe(name)) { er.textContent = 'Itu akunmu sendiri'; return; }
+        if (picked.size >= 49) { er.textContent = 'Anggota sudah penuh'; return; }
+        picked.set(name.toLowerCase(), name); er.textContent = ''; drawChips(); drawContacts();
+      };
+      const cl = document.createElement('div'); cl.className = 'gmlist';
+      const drawContacts = () => {
+        cl.innerHTML = '';
+        st.convs.filter(c => !picked.has(c.u.toLowerCase())).slice(0, 30).forEach(c => {
+          const r = document.createElement('div'); r.className = 'gm';
+          const im = document.createElement('img'); im.alt = ''; im.src = avUrl(c.u);
+          const b = document.createElement('b'); b.textContent = c.u;
+          const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'gx'; bt.textContent = 'Tambah';
+          bt.onclick = () => add(c.u);
+          r.append(im, b, bt); cl.appendChild(r);
+        });
+      };
+      const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px;margin-top:6px';
+      const un = document.createElement('input'); un.className = 'in'; un.placeholder = 'Tambah lewat username'; un.maxLength = 16;
+      un.autocapitalize = 'none'; un.autocomplete = 'off'; un.style.flex = '1'; un.style.margin = '0';
+      const ub = document.createElement('button'); ub.type = 'button'; ub.className = 'btn alt'; ub.textContent = 'Tambah';
+      const goAdd = async () => {
+        const v = un.value.trim(); if (!v) return;
+        ub.disabled = true; er.textContent = '';
+        try { add(await lookupUser(v)); un.value = ''; } catch (e) { er.textContent = e.message; }
+        ub.disabled = false;
+      };
+      ub.onclick = goAdd;
+      un.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); goAdd(); } });
+      row.append(un, ub);
+      const mk = document.createElement('button'); mk.type = 'button'; mk.className = 'btn alt'; mk.textContent = 'Buat grup'; mk.style.marginTop = '10px';
+      mk.onclick = () => {
+        const name = nm.value.trim();
+        if (!name) { er.textContent = 'Isi nama grup dulu'; return; }
+        if (!picked.size) { er.textContent = 'Tambahkan minimal 1 anggota'; return; }
+        mk.disabled = true; er.textContent = '';
+        st.socket.emit('grp:create', { name, members: [...picked.values()] }, r => {
+          if (!r || r.error) { er.textContent = (r && r.error) || 'Gagal membuat grup'; mk.disabled = false; return; }
+          closePop(); openGrp(r.id);
+        });
+      };
+      p.append(nm, lab, chips, er);
+      if (st.convs.length) { const l2 = document.createElement('div'); l2.className = 'glabel'; l2.textContent = 'Dari chat pribadimu'; p.append(l2, cl); drawContacts(); }
+      p.append(row, mk);
+      setTimeout(() => nm.focus(), 300);
+    });
+  }
+
+  function openGrpInfo() {
+    if (!st.grp || !st.socket) return;
+    const id = st.grp;
+    st.socket.emit('grp:info', id, r => {
+      if (!r || r.error) return toast((r && r.error) || 'Gagal memuat info grup');
+      applyGrpInfo(r);
+      openPop(p => {
+        const draw = () => {
+          const info = st.ginfo; if (!info) return;
+          const adm = myGroupAdmin();
+          p.innerHTML = '';
+          const h = document.createElement('h2'); h.textContent = info.name;
+          const sub = document.createElement('div'); sub.className = 'ginfo-sub'; sub.textContent = info.members.length + ' anggota · admin: ' + info.admin;
+          p.append(h, sub);
+          if (adm) {
+            const rn = document.createElement('button'); rn.type = 'button'; rn.className = 'btn alt'; rn.textContent = 'Ganti nama grup';
+            rn.onclick = async () => {
+              const v = await askPrompt('Ganti nama grup', info.name, { max: 30, ok: 'Simpan' });
+              if (v == null || !v.trim()) return;
+              st.socket.emit('grp:rename', { id, name: v.trim() }, x => { if (x && x.error) toast(x.error); });
+            };
+            p.appendChild(rn);
+          }
+          const lab = document.createElement('div'); lab.className = 'glabel'; lab.textContent = 'Anggota'; p.appendChild(lab);
+          const list = document.createElement('div'); list.className = 'gmlist';
+          info.members.forEach(mb => {
+            const r2 = document.createElement('div'); r2.className = 'gm';
+            const im = document.createElement('img'); im.alt = ''; im.src = avUrl(mb.u);
+            const b = document.createElement('b'); b.textContent = isMe(mb.u) ? mb.u + ' (kamu)' : mb.u;
+            r2.append(im, b);
+            if (mb.admin) { const t = document.createElement('span'); t.className = 'tag'; t.textContent = 'Admin'; r2.appendChild(t); }
+            else if (adm) {
+              const x = document.createElement('button'); x.type = 'button'; x.className = 'gx red'; x.textContent = 'Keluarkan';
+              x.onclick = async () => {
+                if (!(await askConfirm('Keluarkan ' + mb.u + '?', 'Dia tidak akan bisa lagi melihat atau mengirim pesan di grup ini.', 'Keluarkan'))) return;
+                st.socket.emit('grp:kick', { id, u: mb.u }, y => { if (y && y.error) toast(y.error); });
+              };
+              r2.appendChild(x);
+            }
+            list.appendChild(r2);
+          });
+          p.appendChild(list);
+          if (adm) {
+            const er = document.createElement('p'); er.className = 'perr';
+            const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px;margin-top:6px';
+            const un = document.createElement('input'); un.className = 'in'; un.placeholder = 'Tambah anggota (username)'; un.maxLength = 16;
+            un.autocapitalize = 'none'; un.autocomplete = 'off'; un.style.flex = '1'; un.style.margin = '0';
+            const ub = document.createElement('button'); ub.type = 'button'; ub.className = 'btn alt'; ub.textContent = 'Tambah';
+            const go = async () => {
+              const v = un.value.trim(); if (!v) return;
+              ub.disabled = true; er.textContent = '';
+              try {
+                const name = await lookupUser(v);
+                st.socket.emit('grp:add', { id, u: name }, x => {
+                  ub.disabled = false;
+                  if (x && x.error) er.textContent = x.error; else un.value = '';
+                });
+              } catch (e) { er.textContent = e.message; ub.disabled = false; }
+            };
+            ub.onclick = go;
+            un.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+            row.append(un, ub); p.append(row, er);
+          }
+          const bye = document.createElement('button'); bye.type = 'button'; bye.className = 'btn ghost'; bye.style.marginTop = '8px';
+          bye.textContent = adm ? 'Hapus grup' : 'Keluar dari grup';
+          bye.onclick = async () => {
+            const ok = adm
+              ? await askConfirm('Hapus grup ' + info.name + '?', 'Semua pesan dan anggota grup akan dihapus. Ini tidak bisa dibatalkan.', 'Hapus')
+              : await askConfirm('Keluar dari ' + info.name + '?', 'Kamu tidak akan menerima pesan grup ini lagi.', 'Keluar');
+            if (!ok) return;
+            st.socket.emit(adm ? 'grp:destroy' : 'grp:leave', id, x => { if (x && x.error) toast(x.error); else closePop(); });
+          };
+          p.appendChild(bye);
+        };
+        draw();
+        st.gDraw = () => { if (document.body.contains(p)) draw(); else st.gDraw = null; };
+      });
+    });
+  }
+
+
+  // ---------- privasi status ----------
+  const PRIV_OPTS = [
+    ['all', 'Semua orang', 'Siapa pun di THERCAY bisa melihat statusmu'],
+    ['contacts', 'Hanya kontak chat', 'Hanya orang yang pernah chat pribadi denganmu'],
+    ['except', 'Semua kecuali…', 'Sembunyikan statusmu dari orang tertentu'],
+    ['only', 'Hanya bagikan ke…', 'Hanya orang yang kamu pilih yang bisa melihat']
+  ];
+  async function openStatusPrivacy() {
+    let cur;
+    try { cur = await authGet('/api/status/privacy'); } catch (e) { return toast('Gagal memuat pengaturan'); }
+    let mode = cur.mode || 'all';
+    const picked = new Map((cur.list || []).map(n => [n.toLowerCase(), n]));
+    openPop(p => {
+      const er = document.createElement('p'); er.className = 'perr';
+      const draw = () => {
+        p.innerHTML = '';
+        const h = document.createElement('h2'); h.textContent = 'Privasi status';
+        const sub = document.createElement('div'); sub.className = 'ginfo-sub'; sub.textContent = 'Atur siapa yang bisa melihat statusmu.';
+        p.append(h, sub);
+        PRIV_OPTS.forEach(([id, title, desc]) => {
+          const b = document.createElement('button'); b.type = 'button'; b.className = 'privopt' + (mode === id ? ' on' : '');
+          const rd = document.createElement('span'); rd.className = 'rd'; rd.innerHTML = icon('check', 12);
+          const tx = document.createElement('span'); tx.style.flex = '1';
+          const bt = document.createElement('b'); bt.textContent = title;
+          const sm = document.createElement('small'); sm.textContent = desc;
+          tx.append(bt, sm); b.append(rd, tx);
+          b.onclick = () => { mode = id; er.textContent = ''; draw(); };
+          p.appendChild(b);
+        });
+        if (mode === 'except' || mode === 'only') {
+          const lab = document.createElement('div'); lab.className = 'glabel';
+          lab.textContent = mode === 'only' ? 'Dibagikan ke (' + picked.size + ')' : 'Disembunyikan dari (' + picked.size + ')';
+          const chips = document.createElement('div'); chips.className = 'gchips';
+          picked.forEach((name, k) => {
+            const c = document.createElement('span'); c.className = 'gchip';
+            const t = document.createElement('span'); t.textContent = name;
+            const x = document.createElement('button'); x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label', 'Hapus');
+            x.onclick = () => { picked.delete(k); draw(); };
+            c.append(t, x); chips.appendChild(c);
+          });
+          p.append(lab, chips);
+          const sug = st.convs.filter(c => !picked.has(c.u.toLowerCase())).slice(0, 20);
+          if (sug.length) {
+            const l2 = document.createElement('div'); l2.className = 'glabel'; l2.textContent = 'Dari chat pribadimu';
+            const cl = document.createElement('div'); cl.className = 'gmlist';
+            sug.forEach(c => {
+              const r = document.createElement('div'); r.className = 'gm';
+              const im = document.createElement('img'); im.alt = ''; im.src = avUrl(c.u);
+              const b = document.createElement('b'); b.textContent = c.u;
+              const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'gx'; bt.textContent = 'Tambah';
+              bt.onclick = () => { picked.set(c.u.toLowerCase(), c.u); draw(); };
+              r.append(im, b, bt); cl.appendChild(r);
+            });
+            p.append(l2, cl);
+          }
+          const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px;margin-top:6px';
+          const un = document.createElement('input'); un.className = 'in'; un.placeholder = 'Tambah lewat username'; un.maxLength = 16;
+          un.autocapitalize = 'none'; un.autocomplete = 'off'; un.style.flex = '1'; un.style.margin = '0';
+          const ub = document.createElement('button'); ub.type = 'button'; ub.className = 'btn alt'; ub.textContent = 'Tambah';
+          const go = async () => {
+            const v = un.value.trim(); if (!v) return;
+            ub.disabled = true; er.textContent = '';
+            try { const nm = await lookupUser(v); picked.set(nm.toLowerCase(), nm); draw(); }
+            catch (e) { er.textContent = e.message; ub.disabled = false; }
+          };
+          ub.onclick = go;
+          un.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+          row.append(un, ub); p.appendChild(row);
+        }
+        p.appendChild(er);
+        const save = document.createElement('button'); save.type = 'button'; save.className = 'btn alt'; save.textContent = 'Simpan'; save.style.marginTop = '8px';
+        save.onclick = async () => {
+          if (mode === 'only' && !picked.size) { er.textContent = 'Pilih minimal 1 orang'; return; }
+          save.disabled = true; er.textContent = '';
+          try {
+            await api('/api/status/privacy', { mode, list: [...picked.values()] }, st.token);
+            toast('Privasi status disimpan'); closePop();
+          } catch (e) { er.textContent = e.message; save.disabled = false; }
+        };
+        p.appendChild(save);
+      };
+      draw();
+    });
+  }
+  $('#stPriv').onclick = openStatusPrivacy;
+
   // ---------- socket ----------
   function connect() {
     if (st.socket) st.socket.disconnect();
     const s = st.socket = io({ auth: { token: st.token, dev: DEV, fp: FP } });
-    s.on('connect', () => { setStatus(true); loadConvs(); loadStatuses(); });
+    s.on('connect', () => { setStatus(true); loadConvs(); loadGrps(); loadStatuses(); });
     s.on('disconnect', reason => {
       setStatus(false);
       // dikeluarkan server (ban/akun dihapus): sambung ulang sekali supaya server menjelaskan alasannya
@@ -1921,6 +2371,30 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
       }
     });
     s.on('dm', onDm);
+    s.on('grp:msg', onGrpMsg);
+    s.on('grp:new', g => {
+      if (!g || !g.id) return;
+      if (!st.grps.some(x => x.id === g.id)) st.grps.push(g);
+      if (!g.mine) toast('Kamu ditambahkan ke grup ' + g.name);
+      renderGrps();
+    });
+    s.on('grp:update', info => {
+      if (!info || !info.id) return;
+      const g = st.grps.find(x => x.id === info.id);
+      if (g) { g.name = info.name; g.count = info.members.length; g.mine = !!(st.me && same(info.admin, st.me.name)); }
+      info.members.forEach(x => { st.avs[x.u] = x.av; });
+      if (st.grp === info.id) applyGrpInfo(info);
+      renderGrps();
+      if (st.gDraw) st.gDraw();
+    });
+    s.on('grp:removed', d => {
+      if (!d || !d.id) return;
+      st.grps = st.grps.filter(x => x.id !== d.id);
+      if (st.grp === d.id) { closePop(); closeGrp(); }
+      if (d.why === 'kick') toast('Kamu dikeluarkan dari grup ' + d.name);
+      else if (d.why === 'destroy') toast('Grup ' + d.name + ' dihapus');
+      renderGrps();
+    });
     s.on('status:update', loadStatuses);
     s.on('status:like', d => {
       if (!d || !d.id) return;
@@ -1991,6 +2465,16 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     });
   });
 
+  bindSend('#xSend', '#xMsg', (text, cb) => {
+    if (!st.grp) return;
+    const payload = { text };
+    if (st.reply) payload.replyId = st.reply.id;
+    st.socket.emit('grp:msg', st.grp, payload, r => {
+      if (!r || !r.error) clearReply();
+      cb(r);
+    });
+  });
+
   // ---------- tutup/buka Global Chat (admin) ----------
   function setGlobalLock(locked, by) {
     st.locked = locked;
@@ -2013,10 +2497,11 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     const now = Date.now();
     if (now - typingSendAt < 1600) return;
     typingSendAt = now;
-    st.socket.emit('typing', scope === 'dm' ? { scope: 'dm', to } : { scope: 'global' });
+    st.socket.emit('typing', scope === 'dm' ? { scope: 'dm', to } : scope === 'group' ? { scope: 'group', id: to } : { scope: 'global' });
   }
   $('#gMsg').addEventListener('input', () => { if ($('#gMsg').value.trim()) emitTyping('global'); });
   $('#dMsg').addEventListener('input', () => { if (st.dm && $('#dMsg').value.trim()) emitTyping('dm', st.dm); });
+  $('#xMsg').addEventListener('input', () => { if (st.grp && $('#xMsg').value.trim()) emitTyping('group', st.grp); });
 
   const typingTimers = {};
   function typingKey(scope, u) { return scope + '|' + u.toLowerCase(); }
@@ -2036,17 +2521,18 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     return row;
   }
   function removeTyping(scope, u) {
-    const listEl = scope === 'global' ? gList : dList;
+    const listEl = scope === 'global' ? gList : scope === 'group' ? xList : dList;
     const id = 'typing-' + scope + '-' + u.toLowerCase().replace(/[^a-z0-9_]/g, '');
     const row = listEl.querySelector('#' + id);
     if (row) row.remove();
   }
   function onTyping(d) {
     if (!d || !d.u || isMe(d.u)) return;
-    const scope = d.scope === 'dm' ? 'dm' : 'global';
+    const scope = d.scope === 'dm' ? 'dm' : d.scope === 'group' ? 'group' : 'global';
     if (scope === 'global' && st.tab !== 'global') return;
+    if (scope === 'group' && !(st.tab === 'chats' && st.grp && st.grp === d.id)) return;
     if (scope === 'dm' && !(st.tab === 'chats' && st.dm && same(st.dm, d.u))) return;
-    const listEl = scope === 'global' ? gList : dList;
+    const listEl = scope === 'global' ? gList : scope === 'group' ? xList : dList;
     const stick = nearBottom(listEl);
     typingRow(listEl, d.u, scope);
     if (stick) toEnd(listEl, true);
@@ -2056,6 +2542,7 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
   }
 
   function replyBarEls() {
+    if (st.tab === 'chats' && st.grp) return { bar: $('#xReply'), who: $('#xReplyWho'), txt: $('#xReplyTxt'), inp: $('#xMsg') };
     const dm = st.tab === 'chats' && st.dm;
     return dm
       ? { bar: $('#dReply'), who: $('#dReplyWho'), txt: $('#dReplyTxt'), inp: $('#dMsg') }
@@ -2075,20 +2562,22 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
   }
   function clearReply() {
     st.reply = null;
-    ['#gReply', '#dReply'].forEach(s => { const el = $(s); if (el) el.classList.add('hidden'); });
+    ['#gReply', '#dReply', '#xReply'].forEach(s => { const el = $(s); if (el) el.classList.add('hidden'); });
   }
   const gReplyX = $('#gReplyX'); if (gReplyX) gReplyX.onclick = clearReply;
   const dReplyX = $('#dReplyX'); if (dReplyX) dReplyX.onclick = clearReply;
+  const xReplyX = $('#xReplyX'); if (xReplyX) xReplyX.onclick = clearReply;
 
   // ---------- tema: terang/gelap + gaya (Paper 3D, Komik 3D Soft, iOS, iOS Liquid Glass) ----------
   const SKINS = [
     { id: 'paper', name: 'Paper 3D', sub: 'Kertas bertumpuk' },
     { id: 'comic', name: 'Komik 3D Soft', sub: 'Pastel, garis tebal' },
+    { id: 'bento', name: 'iOS Bento', sub: 'Minimalis, kartu bento' },
     { id: 'ios', name: 'iOS', sub: 'Bersih & rapi' },
     { id: 'glass', name: 'iOS Liquid Glass', sub: 'Premium, kaca bening' }
   ];
-  const TCOLOR = { paper: ['#e9dfc8', '#0b2240'], comic: ['#fde8f1', '#1c1530'], ios: ['#f2f2f7', '#000000'], glass: ['#cddfff', '#090a24'] };
-  const curSkin = () => document.documentElement.getAttribute('data-skin') || 'paper';
+  const TCOLOR = { paper: ['#e9dfc8', '#0b2240'], comic: ['#fde8f1', '#1c1530'], ios: ['#f2f2f7', '#000000'], bento: ['#f2f2f7', '#000000'], glass: ['#cddfff', '#090a24'] };
+  const curSkin = () => (document.documentElement.hasAttribute('data-bento') ? 'bento' : (document.documentElement.getAttribute('data-skin') || 'paper'));
   const curMode = () => document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
   function syncThemeColor() {
     const mc = document.querySelector('meta[name="theme-color"]');
@@ -2101,8 +2590,11 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     if (persist) { try { localStorage.setItem('pc_theme', t); } catch (e) {} }
   }
   function applySkin(id, persist) {
-    if (!TCOLOR[id] || id === 'paper') { id = 'paper'; document.documentElement.removeAttribute('data-skin'); }
-    else document.documentElement.setAttribute('data-skin', id);
+    const de = document.documentElement;
+    de.removeAttribute('data-bento');
+    if (!TCOLOR[id] || id === 'paper') { id = 'paper'; de.removeAttribute('data-skin'); }
+    else if (id === 'bento') { de.setAttribute('data-skin', 'ios'); de.setAttribute('data-bento', '1'); }
+    else de.setAttribute('data-skin', id);
     syncThemeColor();
     if (persist) { try { localStorage.setItem('pc_skin', id); } catch (e) {} }
   }
@@ -2635,8 +3127,8 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
         addAct('fwd', 'Teruskan', () => openForward(m));
         if (mine) addAct('edit', 'Edit', () => startEdit(m, scope));
       }
-      if (scope !== 'global' || (st.me && st.me.admin)) addAct('pin', m.pinned ? 'Lepas pin' : 'Pin pesan', () => doPin(m, scope));
-      if (mine || (scope === 'global' && st.me && st.me.admin)) addAct('trash', 'Hapus', () => doDelete(m, scope), true);
+      if (scope === 'group' ? myGroupAdmin() : (scope !== 'global' || (st.me && st.me.admin))) addAct('pin', m.pinned ? 'Lepas pin' : 'Pin pesan', () => doPin(m, scope));
+      if (mine || (scope === 'global' && st.me && st.me.admin) || (scope === 'group' && (myGroupAdmin() || (st.me && st.me.admin)))) addAct('trash', 'Hapus', () => doDelete(m, scope), true);
       sheet.appendChild(acts);
       place();
     };
@@ -2678,12 +3170,14 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     if (!st.socket) return;
     const ack = r => { if (r && r.error) toast(r.error); };
     if (scope === 'global') st.socket.emit('msg:react', { id: m.id, emoji }, ack);
+    else if (scope === 'group') st.socket.emit('grp:react', { g: st.grp, id: m.id, emoji }, ack);
     else if (st.dm) st.socket.emit('dm:react', { id: m.id, to: st.dm, emoji }, ack);
   }
   function doPin(m, scope) {
     if (!st.socket) return;
     const ack = r => { if (r && r.error) toast(r.error); else if (r) toast(r.pinned ? 'Pesan dipin' : 'Pin dilepas'); };
     if (scope === 'global') st.socket.emit('msg:pin', { id: m.id }, ack);
+    else if (scope === 'group') st.socket.emit('grp:pin', { g: st.grp, id: m.id }, ack);
     else if (st.dm) st.socket.emit('dm:pin', { id: m.id, to: st.dm }, ack);
   }
 
@@ -2767,7 +3261,7 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     };
   }
   (function watchPins() {
-    [gList, dList].forEach(l => {
+    [gList, dList, xList].forEach(l => {
       let t = 0;
       const run = () => { t = 0; updatePinBar(l); };
       new MutationObserver(() => { if (!t) t = requestAnimationFrame(run); })
@@ -2776,10 +3270,11 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
   })();
   async function doDelete(m, scope) {
     if (!st.socket) return;
-    const other = !isMe(m.u) && scope === 'global';
-    const ok = await askConfirm(other ? 'Hapus pesan ' + m.u + '?' : 'Hapus pesan ini?', other ? 'Pesan ini akan hilang dari Global Chat untuk semua orang.' : 'Pesan akan hilang untuk semua orang.', 'Hapus');
+    const other = !isMe(m.u) && scope !== 'dm';
+    const ok = await askConfirm(other ? 'Hapus pesan ' + m.u + '?' : 'Hapus pesan ini?', other ? (scope === 'group' ? 'Pesan ini akan hilang dari grup untuk semua anggota.' : 'Pesan ini akan hilang dari Global Chat untuk semua orang.') : 'Pesan akan hilang untuk semua orang.', 'Hapus');
     if (!ok || !st.socket) return;
     if (scope === 'global') st.socket.emit('msg:delete', { id: m.id }, r => { if (r && r.error) toast(r.error); });
+    else if (scope === 'group') st.socket.emit('grp:delete', { g: st.grp, id: m.id }, r => { if (r && r.error) toast(r.error); });
     else if (st.dm) st.socket.emit('dm:delete', { id: m.id, to: st.dm }, r => { if (r && r.error) toast(r.error); });
   }
   async function startEdit(m, scope) {
@@ -2788,6 +3283,7 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     const t = text.trim();
     if (!t) return toast('Pesan kosong');
     if (scope === 'global') st.socket.emit('msg:edit', { id: m.id, text: t }, r => { if (r && r.error) toast(r.error); else toast('Diedit'); });
+    else if (scope === 'group') st.socket.emit('grp:edit', { g: st.grp, id: m.id, text: t }, r => { if (r && r.error) toast(r.error); else toast('Diedit'); });
     else if (st.dm) st.socket.emit('dm:edit', { id: m.id, to: st.dm, text: t }, r => { if (r && r.error) toast(r.error); else toast('Diedit'); });
   }
   function applyMsgUpdate(m) {
@@ -2804,7 +3300,7 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
           if (tm) { ed = document.createElement('span'); ed.className = 'edited'; ed.textContent = 'diedit'; tm.appendChild(ed); }
         }
       }
-      const scope = row.closest('#gList') ? 'global' : 'dm';
+      const scope = row.closest('#gList') ? 'global' : row.closest('#xList') ? 'group' : 'dm';
       renderReacts(note, m, scope);
       if (m.viewOnce) { const mw = row.querySelector('.mediawrap'); if (mw) mw.replaceWith(renderChatMedia(m, scope)); }
     });
@@ -3362,9 +3858,10 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
   gMsg.addEventListener('blur', () => setTimeout(hideMention, 200));
   $('#gSend').addEventListener('submit', hideMention);
   function tagUser(name) {
-    const v = gMsg.value;
-    gMsg.value = v + (v && !/\s$/.test(v) ? ' ' : '') + '@' + name + ' ';
-    gMsg.focus();
+    const box = (st.tab === 'chats' && st.grp) ? $('#xMsg') : gMsg;
+    const v = box.value;
+    box.value = v + (v && !/\s$/.test(v) ? ' ' : '') + '@' + name + ' ';
+    box.focus();
   }
   function setGBadge() {
     const b = $('#gBadge'); b.textContent = '@' + st.tagN; b.classList.toggle('hidden', !st.tagN);
@@ -3539,7 +4036,7 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
   function refreshVoRows(id) {
     document.querySelectorAll('.row[data-id="' + id + '"]').forEach(row => {
       const mw = row.querySelector('.mediawrap');
-      if (mw && row._m && row._m.viewOnce) mw.replaceWith(renderChatMedia(row._m, row.closest('#gList') ? 'global' : 'dm'));
+      if (mw && row._m && row._m.viewOnce) mw.replaceWith(renderChatMedia(row._m, row.closest('#gList') ? 'global' : row.closest('#xList') ? 'group' : 'dm'));
     });
   }
 
@@ -3580,11 +4077,12 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     mk('Video', icon('film', 20), () => { st.chatPick = { scope, kind: 'video' }; $('#chatVid').click(); });
     mk('Audio', icon('music', 20), () => { st.chatPick = { scope, kind: 'audio' }; $('#chatAud').click(); });
     document.body.appendChild(menu);
-    const closer = e => { if (!menu.contains(e.target) && e.target.id !== 'gAtt' && e.target.id !== 'dAtt') { menu.remove(); document.removeEventListener('click', closer); } };
+    const closer = e => { if (!menu.contains(e.target) && e.target.id !== 'gAtt' && e.target.id !== 'dAtt' && e.target.id !== 'xAtt') { menu.remove(); document.removeEventListener('click', closer); } };
     setTimeout(() => document.addEventListener('click', closer), 0);
   }
   $('#gAtt').onclick = e => { e.stopPropagation(); openAttachMenu('global'); };
   $('#dAtt').onclick = e => { e.stopPropagation(); if (st.dm) openAttachMenu('dm'); };
+  $('#xAtt').onclick = e => { e.stopPropagation(); if (st.grp) openAttachMenu('group'); };
 
   async function uploadChatMedia(blob, mime) {
     const r = await fetch('/api/chat/media', {
@@ -3606,7 +4104,8 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     };
     if (st.reply) payload.replyId = st.reply.id;
     const done = r => { if (r && r.error) toast(r.error); else clearReply(); };
-    if (scope === 'dm') st.socket.emit('dm', st.dm, payload, done);
+    if (scope === 'group') st.socket.emit('grp:msg', st.grp, payload, done);
+    else if (scope === 'dm') st.socket.emit('dm', st.dm, payload, done);
     else st.socket.emit('msg', payload, done);
   }
 
@@ -3637,6 +4136,7 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
       });
       const onceBtn = document.createElement('button'); onceBtn.type = 'button'; onceBtn.innerHTML = icon('once', 16) + ' Sekali lihat'; onceBtn.classList.add('oncebtn');
       onceBtn.onclick = () => { viewOnce = !viewOnce; onceBtn.classList.toggle('on', viewOnce); };
+      if (scope === 'group') onceBtn.style.display = 'none';
       const cap = document.createElement('input'); cap.type = 'text'; cap.placeholder = 'Caption…'; cap.maxLength = 500;
       cap.style.cssText = 'flex:1;min-width:120px;padding:10px 12px;border-radius:999px;border:0;font-size:14px';
       const send = document.createElement('button'); send.type = 'button'; send.className = 'send'; send.textContent = 'Kirim';
@@ -3706,6 +4206,7 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     let viewOnce = false;
     const onceBtn = document.createElement('button'); onceBtn.type = 'button'; onceBtn.innerHTML = icon('once', 16) + ' Sekali lihat'; onceBtn.classList.add('oncebtn');
     onceBtn.onclick = () => { viewOnce = !viewOnce; onceBtn.classList.toggle('on', viewOnce); };
+      if (scope === 'group') onceBtn.style.display = 'none';
     const cap = document.createElement('input'); cap.type = 'text'; cap.placeholder = 'Caption…'; cap.maxLength = 500;
     cap.style.cssText = 'flex:1;min-width:120px;padding:10px 12px;border-radius:999px;border:0;font-size:14px';
     const send = document.createElement('button'); send.type = 'button'; send.className = 'send'; send.textContent = 'Kirim';
@@ -3861,10 +4362,12 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
     if (!st.socket) return;
     closeStickerSheet();
     const dm = st.tab === 'chats' && st.dm;
+    const grp = st.tab === 'chats' && st.grp;
     const payload = { sticker: file };
     if (st.reply) payload.replyId = st.reply.id;
     const done = r => { if (r && r.error) toast(r.error); else clearReply(); };
-    if (dm) st.socket.emit('dm', st.dm, payload, done);
+    if (grp) st.socket.emit('grp:msg', st.grp, payload, done);
+    else if (dm) st.socket.emit('dm', st.dm, payload, done);
     else st.socket.emit('msg', payload, done);
   }
   async function removeSticker(x, redraw) {
@@ -4055,6 +4558,7 @@ header .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
   }
   $('#gStk').onclick = openStickers;
   $('#dStk').onclick = openStickers;
+  $('#xStk').onclick = openStickers;
   $('#stkfile').addEventListener('change', e => {
     const f = e.target.files[0]; e.target.value = '';
     if (f) openCropper(f);

@@ -18,6 +18,8 @@ const FILES = {
   reads: path.join(DATA, 'reads.json'),
   statuses: path.join(DATA, 'statuses.json'),
   meta: path.join(DATA, 'meta.json'),
+  groups: path.join(DATA, 'groups.json'),
+  gmsgs: path.join(DATA, 'gmsgs.json'),
 };
 const load = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
 const users = load(FILES.users, {});      // key(lowercase) -> {name,salt,hash,avatar,av,created,muted,banned,banReason}
@@ -26,6 +28,8 @@ const sess = load(FILES.sess, {});        // token -> key
 const dms = load(FILES.dms, {});          // 'a|b' (urut) -> pesan pribadi
 const reads = load(FILES.reads, {});      // key -> { keyLawan: waktuBacaTerakhir }
 const meta = load(FILES.meta, { locked: false, lockedBy: null }); // status global chat (dikunci admin atau tidak)
+const groups = load(FILES.groups, {});    // id -> {id,name,admin(key),members:[key],created}
+const gmsgs = load(FILES.gmsgs, {});      // id -> pesan grup (300 terakhir)
 const pairKey = (a, b) => [a, b].sort().join('|');
 // 1 perangkat = 1 akun. Perangkat dikenali lewat id di localStorage + cookie. Isi ONE_DEVICE=0 di panel untuk mematikan aturan ini.
 const ONE_DEVICE = process.env.ONE_DEVICE !== '0';
@@ -179,6 +183,15 @@ const cdMsg = (remain) => {
 // akun admin = Developer (nama dicadangkan, tidak bisa dipakai lewat ganti username)
 const ADMIN_KEY = String(process.env.ADMIN_USER || 'estheryu').toLowerCase();
 const isAdminKey = (k) => k === ADMIN_KEY;
+// Password khusus admin: isi ADMIN_PASSWORD di environment hosting. Tanpa ini akun admin tidak bisa daftar/login.
+const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || '');
+const adminPwOk = (p) => {
+  if (!ADMIN_PASSWORD) return false;
+  const a = crypto.createHash('sha256').update(String(p)).digest();
+  const b = crypto.createHash('sha256').update(ADMIN_PASSWORD).digest();
+  return crypto.timingSafeEqual(a, b);
+};
+const ADMIN_PW_MSG = 'Akun admin dikunci. Password admin salah atau ADMIN_PASSWORD belum diisi di server.';
 // role tambahan yang diatur Developer: vip / owner (hanya badge)
 const ROLES = ['vip', 'owner'];
 const roleOfKey = (k) => (!isAdminKey(k) && users[k] && ROLES.includes(users[k].role)) ? users[k].role : '';
@@ -298,6 +311,21 @@ const renameUser = (oldKey, newKey, newName) => {
     s.views = (s.views || []).map((v) => (v === oldKey ? newKey : v));
     s.likes = (s.likes || []).map((v) => (v === oldKey ? newKey : v));
   }
+  // privasi status: ganti key di daftar milik semua user
+  for (const x of Object.values(users)) {
+    if (x.sp && Array.isArray(x.sp.list) && x.sp.list.includes(oldKey)) x.sp.list = [...new Set(x.sp.list.map((k) => (k === oldKey ? newKey : k)))];
+  }
+  // grup: keanggotaan, admin grup, dan nama pengirim di pesan grup
+  for (const g of Object.values(groups)) {
+    if (g.admin === oldKey) g.admin = newKey;
+    g.members = [...new Set(g.members.map((k) => (k === oldKey ? newKey : k)))];
+    for (const m of gmsgs[g.id] || []) {
+      if (m.u && m.u.toLowerCase() === oldKey) m.u = newName;
+      if (m.reply && m.reply.u && m.reply.u.toLowerCase() === oldKey) m.reply.u = newName;
+    }
+  }
+  save('groups', groups);
+  save('gmsgs', gmsgs);
   save('users', users);
   save('sess', sess);
   save('dms', dms);
@@ -311,6 +339,7 @@ app.post('/api/register', limiter, (req, res) => {
   if (!/^[A-Za-z0-9_]{3,16}$/.test(u)) return res.status(400).json({ error: 'Username 3-16 karakter (huruf, angka, _)' });
   if (p.length < 4 || p.length > 64) return res.status(400).json({ error: 'Password minimal 4 karakter' });
   const key = u.toLowerCase();
+  if (isAdminKey(key) && !adminPwOk(p)) return res.status(403).json({ error: ADMIN_PW_MSG });
   const ids = reqIds(req);
   const fp = validFp(req.headers['x-fp']);
   if (blockedBy(ids, fp)) {
@@ -338,6 +367,7 @@ app.post('/api/register', limiter, (req, res) => {
 app.post('/api/login', limiter, (req, res) => {
   const u = String(req.body.username || '').trim().toLowerCase();
   const p = String(req.body.password || '');
+  if (isAdminKey(u) && !adminPwOk(p)) return res.status(401).json({ error: ADMIN_PW_MSG });
   const user = users[u];
   if (!user) return res.status(401).json({ error: 'Username belum terdaftar' });
   if (user.banned) {
@@ -349,7 +379,7 @@ app.post('/api/login', limiter, (req, res) => {
   }
   const a = Buffer.from(hashPw(p, user.salt), 'hex');
   const b = Buffer.from(user.hash, 'hex');
-  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return res.status(401).json({ error: 'Password salah' });
+  if (!isAdminKey(u) && (a.length !== b.length || !crypto.timingSafeEqual(a, b))) return res.status(401).json({ error: 'Password salah' });
   bindDevice(u, reqIds(req), false);
   addFp(u, req.headers['x-fp']);
   res.json(newSession(u));
@@ -458,6 +488,37 @@ app.post('/api/logout', auth, (req, res) => {
 });
 
 // ----- status -----
+// Privasi status: users[k].sp = { mode: 'all' | 'contacts' | 'except' | 'only', list: [key] }
+// contacts = hanya orang yang pernah chat pribadi dengan pemilik; except = semua kecuali list; only = hanya list.
+// Pemilik selalu bisa melihat statusnya sendiri; admin (Developer) bisa melihat semua untuk moderasi.
+const SP_MODES = ['all', 'contacts', 'except', 'only'];
+const canSeeStatus = (ownerKey, viewerKey) => {
+  if (ownerKey === viewerKey || isAdminKey(viewerKey)) return true;
+  const o = users[ownerKey];
+  if (!o) return false;
+  const sp = o.sp || { mode: 'all', list: [] };
+  const list = sp.list || [];
+  if (sp.mode === 'contacts') return (dms[pairKey(ownerKey, viewerKey)] || []).length > 0;
+  if (sp.mode === 'except') return !list.includes(viewerKey);
+  if (sp.mode === 'only') return list.includes(viewerKey);
+  return true;
+};
+app.get('/api/status/privacy', auth, (req, res) => {
+  const sp = users[req.key].sp || { mode: 'all', list: [] };
+  res.json({ mode: sp.mode, list: (sp.list || []).filter((k) => users[k]).map((k) => users[k].name) });
+});
+app.post('/api/status/privacy', auth, (req, res) => {
+  const mode = String((req.body && req.body.mode) || '');
+  if (!SP_MODES.includes(mode)) return res.status(400).json({ error: 'Pilihan tidak valid' });
+  const names = Array.isArray(req.body && req.body.list) ? req.body.list : [];
+  const list = [...new Set(names.map((n) => String(n || '').trim().toLowerCase()))]
+    .filter((k) => k && k !== req.key && users[k]).slice(0, 200);
+  if (mode === 'only' && !list.length) return res.status(400).json({ error: 'Pilih minimal 1 orang' });
+  users[req.key].sp = { mode, list: mode === 'except' || mode === 'only' ? list : [] };
+  save('users', users);
+  io.emit('status:update', {});
+  res.json({ ok: true });
+});
 const limitStatus = (req, res, next) => {
   const n = statuses.filter((s) => s.key === req.key && Date.now() - s.t <= DAY).length;
   if (n >= 20) return res.status(400).json({ error: 'Maksimal 20 status aktif' });
@@ -500,6 +561,7 @@ app.get('/api/statuses', auth, (req, res) => {
   const by = {};
   for (const s of statuses) {
     if (now - s.t > DAY || !users[s.key]) continue;
+    if (!canSeeStatus(s.key, req.key)) continue;
     const own = s.key === req.key;
     const it = { id: s.id, type: s.type, text: s.text, bg: s.bg, caption: s.caption, url: s.file ? '/media/' + s.file : null, t: s.t, seen: own || s.views.includes(req.key) };
     const likes = (s.likes || []).filter((k) => users[k]);
@@ -521,6 +583,7 @@ app.get('/api/statuses', auth, (req, res) => {
 
 app.post('/api/status/:id/view', auth, (req, res) => {
   const s = statuses.find((x) => x.id === req.params.id);
+  if (s && !canSeeStatus(s.key, req.key)) return res.json({ ok: true });
   if (s && s.key !== req.key && !s.views.includes(req.key)) { s.views.push(req.key); save('statuses', statuses); }
   res.json({ ok: true });
 });
@@ -528,6 +591,7 @@ app.post('/api/status/:id/view', auth, (req, res) => {
 app.post('/api/status/:id/like', auth, (req, res) => {
   const s = statuses.find((x) => x.id === req.params.id);
   if (!s || Date.now() - s.t > DAY || !users[s.key]) return res.status(404).json({ error: 'Status sudah tidak tersedia' });
+  if (!canSeeStatus(s.key, req.key)) return res.status(404).json({ error: 'Status sudah tidak tersedia' });
   if (s.key === req.key) return res.status(400).json({ error: 'Tidak bisa menyukai status sendiri' });
   s.likes = s.likes || [];
   const i = s.likes.indexOf(req.key);
@@ -905,6 +969,7 @@ const onlineList = () => [...online.keys()].map((k) => ({ u: users[k].name, av: 
 io.on('connection', (socket) => {
   online.set(socket.key, (online.get(socket.key) || 0) + 1);
   socket.join('u:' + socket.key);
+  for (const g of Object.values(groups)) if (g.members.includes(socket.key)) socket.join('g:' + g.id);
   const avs = {};
   for (const m of msgs) { const k = m.u.toLowerCase(); if (users[k]) avs[users[k].name] = users[k].av; }
   socket.emit('history', { msgs, avs, online: onlineList(), roles: rolesMap(), locked: meta.locked, lockedBy: meta.lockedBy });
@@ -1004,7 +1069,7 @@ io.on('connection', (socket) => {
     let statusCtx = null;
     if (statusId) {
       const s = statuses.find((x) => x.id === String(statusId));
-      if (!s || now - s.t > DAY || s.key !== toKey) return reply({ error: 'Status sudah tidak tersedia' });
+      if (!s || now - s.t > DAY || s.key !== toKey || !canSeeStatus(s.key, socket.key)) return reply({ error: 'Status sudah tidak tersedia' });
       statusCtx = { id: s.id, type: s.type };
       if (s.type === 'text') { statusCtx.text = String(s.text || '').slice(0, 80); statusCtx.bg = s.bg || 0; }
       else { statusCtx.url = '/media/' + s.file; if (s.caption) statusCtx.text = String(s.caption).slice(0, 80); }
@@ -1327,6 +1392,12 @@ io.on('connection', (socket) => {
     for (const pk of Object.keys(dms)) if (pk.split('|').includes(k)) delete dms[pk];
     delete reads[k];
     for (const r of Object.keys(reads)) if (reads[r] && reads[r][k] != null) delete reads[r][k];
+    for (const g of Object.values(groups)) {
+      if (g.admin === k) { io.to('g:' + g.id).emit('grp:removed', { id: g.id, why: 'destroy', name: g.name }); g.members.forEach((x) => gLeave(x, g.id)); delete groups[g.id]; delete gmsgs[g.id]; }
+      else if (g.members.includes(k)) { g.members = g.members.filter((x) => x !== k); io.to('g:' + g.id).emit('grp:update', gPub(g)); }
+    }
+    save('groups', groups); save('gmsgs', gmsgs);
+    for (const x of Object.values(users)) if (x.sp && Array.isArray(x.sp.list)) x.sp.list = x.sp.list.filter((q) => q !== k);
     delete users[k];
     online.delete(k);
     save('users', users); save('dms', dms); save('reads', reads);
@@ -1345,7 +1416,266 @@ io.on('connection', (socket) => {
   });
 
   // ---- indikator mengetik (bubble chat) ----
+
+  // ---------------- GRUP ----------------
+  // Pembuat grup otomatis jadi admin grup (hanya di grup itu). Admin grup: tambah/keluarkan anggota, ganti nama, pin, hapus pesan siapa pun, hapus grup.
+  const MAX_GROUP = 50, MAX_MY_GROUPS = 20, MAX_GMSG = 300;
+  const gGet = (id) => groups[String(id || '')] || null;
+  const gIs = (g) => !!g && g.members.includes(socket.key);
+  const gAdm = (g) => !!g && g.admin === socket.key;
+  const gPub = (g) => ({
+    id: g.id, name: g.name, created: g.created,
+    admin: users[g.admin] ? users[g.admin].name : '',
+    members: g.members.filter((k) => users[k]).map((k) => ({ u: users[k].name, av: users[k].av, admin: k === g.admin, online: online.has(k) })),
+  });
+  const gSum = (g, me) => {
+    const arr = gmsgs[g.id] || [];
+    const lm = arr[arr.length - 1];
+    const seen = (reads[me] && reads[me]['g:' + g.id]) || 0;
+    const unread = arr.filter((m) => m.u.toLowerCase() !== me && m.t > seen).length;
+    let text = '';
+    if (lm) text = lm.u + ': ' + (lm.sticker ? 'Stiker' : lm.text || (lm.media ? (lm.media.type === 'video' ? 'Video' : lm.media.type === 'audio' ? 'Audio' : 'Foto') : ''));
+    return { id: g.id, name: g.name, count: g.members.length, text, t: lm ? lm.t : g.created, unread, mine: g.admin === me };
+  };
+  const gJoin = (k, id) => { io.in('u:' + k).socketsJoin('g:' + id); };
+  const gLeave = (k, id) => { io.in('u:' + k).socketsLeave('g:' + id); };
+  const gBroadcastInfo = (g) => io.to('g:' + g.id).emit('grp:update', gPub(g));
+  const gNotifyNew = (g, k) => io.to('u:' + k).emit('grp:new', gSum(g, k));
+  const gSave = () => { save('groups', groups); save('gmsgs', gmsgs); };
+  const gFindMsg = (g, id) => (gmsgs[g.id] || []).find((x) => x.id === String(id || ''));
+
+  socket.on('grp:create', (data, ack) => {
+    const done = typeof ack === 'function' ? ack : () => {};
+    const name = String((data && data.name) || '').trim().replace(/\s+/g, ' ').slice(0, 30);
+    if (name.length < 1) return done({ error: 'Nama grup wajib diisi' });
+    const mine = Object.values(groups).filter((g) => g.admin === socket.key).length;
+    if (mine >= MAX_MY_GROUPS) return done({ error: 'Maksimal ' + MAX_MY_GROUPS + ' grup buatanmu' });
+    const names = Array.isArray(data && data.members) ? data.members : [];
+    const ks = [...new Set(names.map((n) => String(n || '').trim().toLowerCase()))]
+      .filter((k) => k && k !== socket.key && users[k] && !users[k].banned);
+    if (!ks.length) return done({ error: 'Tambahkan minimal 1 anggota yang sudah terdaftar' });
+    if (ks.length + 1 > MAX_GROUP) return done({ error: 'Maksimal ' + MAX_GROUP + ' anggota' });
+    const id = crypto.randomBytes(5).toString('hex');
+    const g = { id, name, admin: socket.key, members: [socket.key, ...ks], created: Date.now() };
+    groups[id] = g; gmsgs[id] = [];
+    gSave();
+    g.members.forEach((k) => { gJoin(k, id); gNotifyNew(g, k); });
+    done({ ok: true, id });
+  });
+
+  socket.on('grp:list', (_, ack) => {
+    if (typeof ack !== 'function') return;
+    ack(Object.values(groups).filter((g) => g.members.includes(socket.key)).map((g) => gSum(g, socket.key)).sort((a, b) => b.t - a.t));
+  });
+
+  socket.on('grp:history', (id, ack) => {
+    if (typeof ack !== 'function') return;
+    const g = gGet(id);
+    if (!gIs(g)) return ack({ error: 'Kamu bukan anggota grup ini' });
+    ack({ msgs: gmsgs[g.id] || [], info: gPub(g) });
+  });
+
+  socket.on('grp:read', (id) => {
+    const g = gGet(id);
+    if (!gIs(g)) return;
+    (reads[socket.key] = reads[socket.key] || {})['g:' + g.id] = Date.now();
+    save('reads', reads);
+  });
+
+  socket.on('grp:msg', (id, payload, ack) => {
+    if (typeof payload === 'function') { ack = payload; payload = ''; }
+    const reply = typeof ack === 'function' ? ack : () => {};
+    const g = gGet(id);
+    if (!gIs(g)) return reply({ error: 'Kamu bukan anggota grup ini' });
+    const now = Date.now();
+    if (now - last < 600) return reply({ error: 'Pelan-pelan ya' });
+    let text, replyId = null, forward = null, sticker = null, media = null;
+    if (payload && typeof payload === 'object') {
+      text = payload.text;
+      replyId = payload.replyId || null;
+      forward = payload.forward || null;
+      if (payload.sticker) {
+        sticker = validSticker(payload.sticker);
+        if (!sticker) return reply({ error: 'Stiker tidak valid' });
+      }
+      if (payload.media && payload.media.file) {
+        const f = validMediaFile(payload.media.file);
+        if (!f) return reply({ error: 'Media tidak valid' });
+        const t = payload.media.type || mediaTypeOf(f);
+        if (!t) return reply({ error: 'Tipe media tidak valid' });
+        media = { file: f, type: t, mime: payload.media.mime || null };
+      }
+    } else {
+      text = payload;
+    }
+    text = String(text || '').trim().slice(0, 500);
+    if (sticker) text = '';
+    if (!text && !sticker && !media) return reply({ error: 'Kosong' });
+    last = now;
+    const me = users[socket.key];
+    const m = { id: now.toString(36) + Math.random().toString(36).slice(2, 6), u: me.name, av: me.av, g: g.id, text, t: now };
+    if (sticker) m.sticker = sticker;
+    if (media) m.media = media;
+    const arr = (gmsgs[g.id] = gmsgs[g.id] || []);
+    if (replyId) {
+      const src = arr.find((x) => x.id === String(replyId));
+      if (src) { m.reply = { id: src.id, u: src.u, text: stkPreview(src) }; if (src.sticker) m.reply.sticker = src.sticker; }
+    }
+    if (forward && forward.u && forward.text) m.forward = { u: String(forward.u).slice(0, 32), text: String(forward.text).slice(0, 120) };
+    const mentions = [...new Set((text.match(/@([A-Za-z0-9_]{3,16})/g) || []).map((x) => x.slice(1).toLowerCase()))]
+      .filter((k) => g.members.includes(k)).slice(0, 10).map((k) => users[k].name);
+    if (mentions.length) m.mentions = mentions;
+    arr.push(m);
+    if (arr.length > MAX_GMSG) arr.splice(0, arr.length - MAX_GMSG);
+    save('gmsgs', gmsgs);
+    io.to('g:' + g.id).emit('grp:msg', m);
+    reply({ ok: true });
+  });
+
+  socket.on('grp:edit', (data, ack) => {
+    const done = typeof ack === 'function' ? ack : () => {};
+    const g = gGet(data && data.g);
+    if (!gIs(g)) return done({ error: 'Bukan anggota grup' });
+    const text = String((data && data.text) || '').trim().slice(0, 500);
+    const m = gFindMsg(g, data && data.id);
+    if (!m || !text || !isOwn(m) || m.sticker) return done({ error: 'Tidak bisa diedit' });
+    m.text = text; m.edited = Date.now();
+    save('gmsgs', gmsgs);
+    io.to('g:' + g.id).emit('msg:update', m);
+    done({ ok: true });
+  });
+
+  socket.on('grp:delete', (data, ack) => {
+    const done = typeof ack === 'function' ? ack : () => {};
+    const g = gGet(data && data.g);
+    if (!gIs(g)) return done({ error: 'Bukan anggota grup' });
+    const arr = gmsgs[g.id] || [];
+    const i = arr.findIndex((x) => x.id === String(data && data.id));
+    if (i < 0 || !(isOwn(arr[i]) || gAdm(g) || isAdminKey(socket.key))) return done({ error: 'Tidak bisa dihapus' });
+    const id = arr[i].id;
+    arr.splice(i, 1);
+    save('gmsgs', gmsgs);
+    io.to('g:' + g.id).emit('msg:delete', { id, scope: 'group', g: g.id });
+    done({ ok: true });
+  });
+
+  socket.on('grp:react', (data, ack) => {
+    const done = typeof ack === 'function' ? ack : () => {};
+    const g = gGet(data && data.g);
+    if (!gIs(g)) return done({ error: 'Bukan anggota grup' });
+    const emoji = String((data && data.emoji) || '');
+    if (!validEmoji(emoji)) return done({ error: 'Emoji tidak valid' });
+    const m = gFindMsg(g, data && data.id);
+    if (!m) return done({ error: 'Pesan tidak ada' });
+    const name = users[socket.key].name;
+    m.reactions = m.reactions || {};
+    const had = (m.reactions[emoji] || []).includes(name);
+    for (const e of Object.keys(m.reactions)) {
+      m.reactions[e] = (m.reactions[e] || []).filter((n) => n !== name);
+      if (!m.reactions[e].length) delete m.reactions[e];
+    }
+    if (!had && !m.reactions[emoji] && Object.keys(m.reactions).length >= MAX_KINDS) return done({ error: 'Terlalu banyak jenis reaksi' });
+    if (!had) m.reactions[emoji] = (m.reactions[emoji] || []).concat(name);
+    save('gmsgs', gmsgs);
+    io.to('g:' + g.id).emit('msg:update', m);
+    done({ ok: true });
+  });
+
+  socket.on('grp:pin', (data, ack) => {
+    const done = typeof ack === 'function' ? ack : () => {};
+    const g = gGet(data && data.g);
+    if (!gIs(g)) return done({ error: 'Bukan anggota grup' });
+    if (!gAdm(g)) return done({ error: 'Hanya admin grup yang bisa pin pesan' });
+    const m = gFindMsg(g, data && data.id);
+    if (!m) return done({ error: 'Pesan tidak ada' });
+    if (m.pinned) { delete m.pinned; delete m.pinnedBy; } else { m.pinned = Date.now(); m.pinnedBy = users[socket.key].name; }
+    save('gmsgs', gmsgs);
+    io.to('g:' + g.id).emit('msg:update', m);
+    done({ ok: true, pinned: !!m.pinned });
+  });
+
+  socket.on('grp:info', (id, ack) => {
+    if (typeof ack !== 'function') return;
+    const g = gGet(id);
+    if (!gIs(g)) return ack({ error: 'Kamu bukan anggota grup ini' });
+    ack(gPub(g));
+  });
+
+  socket.on('grp:add', (data, ack) => {
+    const done = typeof ack === 'function' ? ack : () => {};
+    const g = gGet(data && data.id);
+    if (!gIs(g)) return done({ error: 'Bukan anggota grup' });
+    if (!gAdm(g)) return done({ error: 'Hanya admin grup yang bisa menambah anggota' });
+    const k = String((data && data.u) || '').trim().toLowerCase();
+    if (!k || !users[k] || users[k].banned) return done({ error: 'Username tidak ditemukan' });
+    if (g.members.includes(k)) return done({ error: 'Sudah jadi anggota' });
+    if (g.members.length >= MAX_GROUP) return done({ error: 'Anggota sudah penuh (' + MAX_GROUP + ')' });
+    g.members.push(k);
+    save('groups', groups);
+    gJoin(k, g.id); gNotifyNew(g, k); gBroadcastInfo(g);
+    done({ ok: true });
+  });
+
+  socket.on('grp:kick', (data, ack) => {
+    const done = typeof ack === 'function' ? ack : () => {};
+    const g = gGet(data && data.id);
+    if (!gIs(g)) return done({ error: 'Bukan anggota grup' });
+    if (!gAdm(g)) return done({ error: 'Hanya admin grup yang bisa mengeluarkan anggota' });
+    const k = String((data && data.u) || '').trim().toLowerCase();
+    if (k === g.admin) return done({ error: 'Admin grup tidak bisa dikeluarkan' });
+    if (!g.members.includes(k)) return done({ error: 'Bukan anggota' });
+    g.members = g.members.filter((x) => x !== k);
+    save('groups', groups);
+    io.to('u:' + k).emit('grp:removed', { id: g.id, why: 'kick', name: g.name });
+    gLeave(k, g.id);
+    gBroadcastInfo(g);
+    done({ ok: true });
+  });
+
+  socket.on('grp:rename', (data, ack) => {
+    const done = typeof ack === 'function' ? ack : () => {};
+    const g = gGet(data && data.id);
+    if (!gIs(g)) return done({ error: 'Bukan anggota grup' });
+    if (!gAdm(g)) return done({ error: 'Hanya admin grup yang bisa ganti nama' });
+    const name = String((data && data.name) || '').trim().replace(/\s+/g, ' ').slice(0, 30);
+    if (!name) return done({ error: 'Nama tidak boleh kosong' });
+    g.name = name;
+    save('groups', groups);
+    gBroadcastInfo(g);
+    done({ ok: true });
+  });
+
+  socket.on('grp:leave', (id, ack) => {
+    const done = typeof ack === 'function' ? ack : () => {};
+    const g = gGet(id);
+    if (!gIs(g)) return done({ error: 'Bukan anggota grup' });
+    if (gAdm(g)) return done({ error: 'Admin grup tidak bisa keluar. Hapus grup kalau sudah tidak dipakai.' });
+    g.members = g.members.filter((x) => x !== socket.key);
+    save('groups', groups);
+    io.to('u:' + socket.key).emit('grp:removed', { id: g.id, why: 'leave', name: g.name });
+    gLeave(socket.key, g.id);
+    gBroadcastInfo(g);
+    done({ ok: true });
+  });
+
+  socket.on('grp:destroy', (id, ack) => {
+    const done = typeof ack === 'function' ? ack : () => {};
+    const g = gGet(id);
+    if (!gIs(g)) return done({ error: 'Bukan anggota grup' });
+    if (!gAdm(g)) return done({ error: 'Hanya admin grup yang bisa menghapus grup' });
+    io.to('g:' + g.id).emit('grp:removed', { id: g.id, why: 'destroy', name: g.name });
+    g.members.forEach((k) => { gLeave(k, g.id); if (reads[k]) delete reads[k]['g:' + g.id]; });
+    delete groups[g.id]; delete gmsgs[g.id];
+    gSave(); save('reads', reads);
+    done({ ok: true });
+  });
+
   socket.on('typing', (data) => {
+    if (data && data.scope === 'group') {
+      const g = gGet(data.id);
+      if (gIs(g)) socket.to('g:' + g.id).emit('typing', { u: users[socket.key].name, scope: 'group', id: g.id });
+      return;
+    }
     const scope = data && data.scope === 'dm' ? 'dm' : 'global';
     const name = users[socket.key].name;
     if (scope === 'global') {
